@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>โครงงานบาดแผลในใจ</title>
+  <style>
+    body { font-family: sans-serif; margin: 40px; background: #f9f9f9; }
+    h1, h2 { color: #333; }
+    .question { margin-bottom: 20px; padding: 10px; background: #fff; border-radius: 8px; }
+    button { margin-top: 20px; padding: 10px 20px; border: none; background: #4CAF50; color: white; border-radius: 5px; cursor: pointer; }
+    button:hover { background: #45a049; }
+    .result-box { margin-top: 30px; padding: 20px; background: #fff; border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <!-- หน้าแรก -->
+  <div id="home">
+    <h1>โครงงาน: สำรวจบาดแผลในใจ</h1>
+    <p>โครงการนี้มีเป้าหมายเพื่อสำรวจวิธีที่คนไทยจัดการกับบาดแผลทางใจจากอดีต</p>
+    <button onclick="startQuiz()">เริ่มทำแบบสอบถาม</button>
+  </div>
+
+  <!-- หน้าแบบสอบถาม -->
+  <div id="quiz" style="display:none;">
+    <h2>แบบสอบถามสุขภาพจิต</h2>
+    <div id="questions"></div>
+    <button onclick="calculateResult()">ดูผลลัพธ์</button>
+  </div>
+
+  <!-- หน้าผลลัพธ์ -->
+  <div id="result" style="display:none;" class="result-box"></div>
+
+  <!-- หน้าคำแนะนำ -->
+  <div id="recommendation" style="display:none;" class="result-box"></div>
+
+  <script>
+    const questions = [
+      "ในช่วง 2 สัปดาห์ที่ผ่านมา คุณรู้สึกเศร้า สิ้นหวัง หรือหมดกำลังใจบ่อยแค่ไหน?",
+      "คุณรู้สึกเหนื่อยง่ายหรือไม่มีแรงบ่อยแค่ไหน?",
+      "คุณนอนหลับยากหรือหลับไม่สนิทบ่อยแค่ไหน?"
+    ];
+
+    function startQuiz() {
+      document.getElementById("home").style.display = "none";
+      document.getElementById("quiz").style.display = "block";
+      const qDiv = document.getElementById("questions");
+      qDiv.innerHTML = "";
+      questions.forEach((q, i) => {
+        qDiv.innerHTML += `
+          <div class="question">
+            <p>${q}</p>
+            <label><input type="radio" name="q${i}" value="0"> ไม่เลย</label>
+            <label><input type="radio" name="q${i}" value="1"> บางวัน</label>
+            <label><input type="radio" name="q${i}" value="2"> มากกว่า 7 วัน</label>
+            <label><input type="radio" name="q${i}" value="3"> เกือบทุกวัน</label>
+          </div>`;
+      });
+    }
+
+    function calculateResult() {
+      let score = 0;
+      questions.forEach((q, i) => {
+        const val = document.querySelector(`input[name="q${i}"]:checked`);
+        if (val) score += parseInt(val.value);
+      });
+
+      let level = "";
+      if (score <= 3) level = "ระดับต่ำ";
+      else if (score <= 6) level = "ระดับปานกลาง";
+      else level = "ระดับสูง";
+
+      document.getElementById("quiz").style.display = "none";
+      document.getElementById("result").style.display = "block";
+      document.getElementById("result").innerHTML =
+        `<h2>ผลลัพธ์</h2><p>คะแนนรวม: ${score}</p><p>ระดับ: ${level}</p>
+         <button onclick="showRecommendation('${level}')">ดูคำแนะนำ</button>`;
+    }
+
+    function showRecommendation(level) {
+      document.getElementById("result").style.display = "none";
+      document.getElementById("recommendation").style.display = "block";
+      let advice = "";
+      if (level === "ระดับต่ำ") {
+        advice = "คุณมีภาวะความเครียดในระดับต่ำ แนะนำให้ทำกิจกรรมผ่อนคลาย เช่น การออกกำลังกายเบา ๆ การเขียนบันทึก หรือการทำสมาธิ";
+      } else if (level === "ระดับปานกลาง") {
+        advice = "คุณมีภาวะความเครียดในระดับปานกลาง ควรหากิจกรรมที่ช่วยระบาย เช่น การพูดคุยกับเพื่อนสนิท หรือการเข้าวัดทำบุญ";
+      } else {
+        advice = "คุณมีภาวะความเครียดในระดับสูง แนะนำให้ปรึกษาผู้เชี่ยวชาญด้านสุขภาพจิต หรือโทรสายด่วนสุขภาพจิต 1323 เพื่อรับคำปรึกษา";
+      }
+      document.getElementById("recommendation").innerHTML =
+        `<h2>คำแนะนำ</h2><p>${advice}</p>`;
+    }
+  </script>
+</body>
+</html>
